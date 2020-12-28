@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+    ui:
+        build: ./ui
+        image: ui_img
+        env_file:
+            - ./ui/ui.env
+        ports:
+            - "80:80"
+        depends_on: 
+            - ms   
+        networks:
+            team-bridge:
+                aliases:
+                    - ui
+    ms:
+        build: ./ms
+        image: ms_img
+        env_file:
+            - ./ms/ms.env
+        ports:
+            - "8080:8080"
+        depends_on: 
+            - db   
+        networks:
+            team-bridge:
+                aliases:
+                    - ms
+    db:
+        build: ./db
+        image: db_img
+        environment: 
+            POSTGRES_PASSWORD: test
+            PGDATA: /var/lib/postgresql/data/pgdata
+        ports:
+            - "15432:5432"
+        networks:
+            team-bridge:
+                aliases:
+                    - db
+    
+networks:
+    team-bridge:
+        driver: bridge
+        name: team-bridge
+        
